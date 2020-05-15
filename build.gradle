@@ -8,7 +8,7 @@ plugins {
 }
 
 application {
-    mainClassName = '' // full package path of Main
+    mainClassName = 'com.crazystudio.random_server.Server'
 }
 
 ext {
@@ -49,11 +49,14 @@ dependencies {
     implementation "io.circe:circe-parser_${scalaVersion}:${circeVersion}"
     implementation "io.circe:circe-generic_${scalaVersion}:${circeVersion}"
 
+    implementation "org.http4s:http4s-dsl_${scalaVersion}:${http4sVersion}"
+    implementation "org.http4s:http4s-circe_${scalaVersion}:${http4sVersion}"
+    implementation "org.http4s:http4s-blaze-server_${scalaVersion}:${http4sVersion}"
+    implementation "org.http4s:http4s-blaze-client_${scalaVersion}:${http4sVersion}"
+
     implementation "com.typesafe.scala-logging:scala-logging_${scalaVersion}:3.9.2"
     implementation "ch.qos.logback:logback-classic:1.2.3"
     implementation "net.logstash.logback:logstash-logback-encoder:6.3"
-
-    gatlingCompile "com.github.pureconfig:pureconfig_${scalaVersion}:${pureConfigVersion}"
 
     testImplementation 'junit:junit:4.12'
     testImplementation "org.scalatest:scalatest_${scalaVersion}:3.1.1"
