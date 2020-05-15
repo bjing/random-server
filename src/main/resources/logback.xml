@@ -1,0 +1,22 @@
+<configuration>
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+      <customFields>
+        {"name": "kg-org-enrich-api"}
+      </customFields>
+      <fieldNames>
+        <logLevelValue>[ignore]</logLevelValue>
+        <version>[ignore]</version>
+        <threadName>[ignore]</threadName>
+      </fieldNames>
+      <timeZone>UTC</timeZone>
+    </encoder>
+  </appender>
+
+  <logger name="org.http4s.blaze" level="warn"/>
+  <logger name="org.http4s.server.middleware" level="info"/>
+
+  <root level="info">
+    <appender-ref ref="STDOUT" />
+  </root>
+</configuration>

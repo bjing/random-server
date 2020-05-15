@@ -1,0 +1,17 @@
+# gradle
+build
+classes
+out
+.gradle
+.gradletasknamecache
+
+# IDEs
+.idea
+*.iml
+.classpath
+.project
+.settings
+bin/
+
+# Mac OS stuff
+.DS_Store

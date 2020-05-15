@@ -1,0 +1,100 @@
+plugins {
+    id 'scala'
+    id 'com.diffplug.gradle.spotless' version '3.26.0'
+    id 'application'
+    id 'com.github.maiflai.scalatest' version '0.25'
+    id 'maven'
+    id "com.github.lkishalmi.gatling" version "3.3.0"
+}
+
+application {
+    mainClassName = '' // full package path of Main
+}
+
+ext {
+    // Scala version is kept as 2.12 to play nice with Gradle 6.2.1 and Intellij
+    scalaVersionFull = '2.13.2'
+    scalaVersion = '2.13'
+    catsVersion = '2.1.1'
+    circeVersion = '0.12.3'
+    http4sVersion = '0.21.4'
+    pureConfigVersion = '0.12.3'
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    jcenter()
+}
+
+configurations {
+    kindProjectorPlugin
+    betterMonadicForPlugin
+}
+
+dependencies {
+    implementation "org.scala-lang:scala-library:${scalaVersionFull}"
+    kindProjectorPlugin group: 'org.typelevel', name: "kind-projector_${scalaVersionFull}", version: '0.11.0'
+    betterMonadicForPlugin group: 'com.olegpy', name: "better-monadic-for_${scalaVersion}", version: '0.3.1'
+
+    implementation "commons-io:commons-io:2.6"
+
+    implementation "com.typesafe:config:1.4.0"
+    implementation "com.github.pureconfig:pureconfig_${scalaVersion}:${pureConfigVersion}"
+
+    implementation "org.typelevel:cats-core_${scalaVersion}:${catsVersion}"
+    implementation "org.typelevel:cats-effect_${scalaVersion}:${catsVersion}"
+
+    implementation "io.circe:circe-core_${scalaVersion}:${circeVersion}"
+    implementation "io.circe:circe-parser_${scalaVersion}:${circeVersion}"
+    implementation "io.circe:circe-generic_${scalaVersion}:${circeVersion}"
+
+    implementation "com.typesafe.scala-logging:scala-logging_${scalaVersion}:3.9.2"
+    implementation "ch.qos.logback:logback-classic:1.2.3"
+    implementation "net.logstash.logback:logstash-logback-encoder:6.3"
+
+    gatlingCompile "com.github.pureconfig:pureconfig_${scalaVersion}:${pureConfigVersion}"
+
+    testImplementation 'junit:junit:4.12'
+    testImplementation "org.scalatest:scalatest_${scalaVersion}:3.1.1"
+    testRuntimeOnly "com.vladsch.flexmark:flexmark-all:0.35.10"
+
+    testRuntimeOnly "org.scala-lang.modules:scala-xml_${scalaVersion}:1.2.0"
+    testRuntimeOnly 'org.pegdown:pegdown:1.4.2'
+}
+
+tasks.withType(ScalaCompile) {
+    scalaCompileOptions.additionalParameters = [
+        "-Xfatal-warnings",
+        "-Xplugin:" + configurations.kindProjectorPlugin.asPath,
+        "-Xplugin:" + configurations.betterMonadicForPlugin.asPath,
+        "-Ywarn-unused:implicits",           // Warn if an implicit parameter is unused.
+        "-Ywarn-unused:imports",             // Warn if an import selector is not referenced.
+        "-Ywarn-unused:locals",              // Warn if a local definition is unused.
+        "-Ywarn-unused:patvars",             // Warn if a variable bound in a pattern is unused.
+        "-Ywarn-unused:privates",            // Warn if a private member is unused
+    ]
+}
+
+spotless {
+    scala {
+        scalafmt().configFile("${rootDir}/.scalafmt.conf")
+        target project.fileTree(projectDir) {
+            include '**/*.scala'
+        }
+    }
+
+    format 'misc', {
+        target project.fileTree(projectDir) {
+            include '**/*.gradle', '**/*.md', '**/.gitignore', '**/*.scala', '**/*.properties', '**/*.conf', '**/*.yaml', '**/*.yml', '**/*.xml'
+            exclude 'build/**'
+            exclude 'target/**'
+            exclude '.gradle/**'
+            exclude '.idea/**'
+        }
+
+        trimTrailingWhitespace()
+        indentWithSpaces()
+        endWithNewline()
+    }
+}
